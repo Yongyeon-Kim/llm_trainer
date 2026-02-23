@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  llm_trainer:
+    image: pytorch/pytorch:2.1.2-cuda11.8-cudnn8-devel
+    working_dir: /workspace
+    network_mode: host
+    shm_size: "16gb"
+    volumes:
+      - ./:/workspace
+      - ./data:/workspace/data
+      - ./models:/workspace/models
+    environment:
+      PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: "all"
+              capabilities: [gpu]
+    container_name: llm_trainer
+    entrypoint: ["/bin/bash"]
+    tty: true
